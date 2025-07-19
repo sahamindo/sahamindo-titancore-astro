@@ -1,0 +1,50 @@
+---
+import { getCollection } from 'astro:content';
+import { marketSectors, getSectorBySlug } from '@data/categories';
+import { newsSetting } from '@data/config';
+import PaginatedNewsLayout from '@components/news/PaginatedNewsLayout.astro';
+
+export async function getStaticPaths() {
+    const allArticles = await getCollection('news', ({ data }) => {
+        return import.meta.env.DEV || data.publish !== false;
+    });
+
+    return marketSectors.map(sector => {
+        const sectorArticles = allArticles
+            .filter(article => article.data.category === sector.id)
+            .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime());
+
+        const articlesPerPage = newsSetting.articlesPerPage;
+        const totalPages = Math.ceil(sectorArticles.length / articlesPerPage);
+        const currentPageArticles = sectorArticles.slice(0, articlesPerPage);
+
+        return {
+            params: { sector: sector.slug },
+            props: {
+                sector,
+                articles: currentPageArticles,
+                currentPage: 1,
+                totalPages,
+                totalArticles: sectorArticles.length
+            }
+        };
+    });
+}
+
+const { sector, articles, currentPage, totalPages } = Astro.props;
+
+const pageTitle = `Berita ${sector.name} - Saham Indonesia`;
+const pageDescription = `${sector.description}. Berita dan analisis terkini sektor ${sector.name.toLowerCase()} di Bursa Efek Indonesia.`;
+---
+
+<PaginatedNewsLayout
+    articles={articles}
+    currentPage={currentPage}
+    totalPages={totalPages}
+    baseUrl={`/sektor/${sector.slug}`}
+    title={pageTitle}
+    subtitle={sector.description}
+    currentSector={sector.id}
+    seoTitle={`Berita ${sector.name} - Sahamindo`}
+    seoDescription={pageDescription}
+/>

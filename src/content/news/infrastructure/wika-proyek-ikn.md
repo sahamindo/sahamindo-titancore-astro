@@ -1,7 +1,6 @@
 ---
 title: "WIKA Raih Kontrak Rp 8,5 Triliun untuk Pembangunan IKN"
 excerpt: "PT Wijaya Karya Tbk (WIKA) mengamankan kontrak senilai Rp 8,5 triliun untuk proyek infrastruktur di Ibu Kota Nusantara, memperkuat posisi sebagai kontraktor utama IKN."
-featuredImage: "./images/wika-ikn-project.jpg"
 publishDate: "2024-10-27"
 author: "Dewi Lestari"
 category: "infrastructure"

@@ -1,0 +1,135 @@
+---
+import NewsArticle from './NewsArticle.astro';
+import type { CollectionEntry } from 'astro:content';
+import { marketSectors } from '../../data/categories';
+import { getCollection } from 'astro:content';
+
+interface Props {
+    articles: CollectionEntry<'news'>[];
+    currentSector?: string;
+    showSectorFilter?: boolean;
+}
+
+const { articles, currentSector, showSectorFilter = true } = Astro.props;
+
+// Get all news articles to determine active sectors
+const allArticles = await getCollection('news', ({ data }) => {
+    return import.meta.env.DEV || data.publish !== false;
+});
+
+// Filter to only show sectors that have articles
+const activeSectors = marketSectors.filter((sector) =>
+    allArticles.some((article) => article.data.category === sector.id),
+);
+
+// Count articles per sector
+const sectorCounts = marketSectors.reduce((acc, sector) => {
+    acc[sector.id] = allArticles.filter(article => article.data.category === sector.id).length;
+    return acc;
+}, {} as Record<string, number>);
+---
+
+<section class="site-container mx-auto px-4 py-base">
+    {showSectorFilter && (
+        <div
+            class="mb-16 flex flex-col sm:flex-row sm:justify-between sm:items-end gap-6"
+            data-aos="fade-in"
+            data-aos-delay="100"
+        >
+            <div class="w-full">
+                <h2 class="text-lg font-semibold mb-4">Filter berdasarkan Sektor:</h2>
+                <div class="sector-filter-container">
+                    <a
+                        href="/berita"
+                        class={`sector-filter-button px-4 sm:px-6 py-2 sm:py-3 leading-none rounded-md text-small flex items-center justify-center transition-colors border border-primary duration-200 ${
+                            !currentSector
+                                ? 'bg-primary text-body-dark shadow-md'
+                                : 'bg-background text-body-base hover:bg-background-light hover:text-body-light'
+                        }`}
+                    >
+                        Semua Berita
+                    </a>
+                    {activeSectors.map((sector) => (
+                        <a
+                            href={`/sektor/${sector.slug}`}
+                            class={`sector-filter-button px-4 sm:px-6 py-2 sm:py-3 leading-none rounded-md text-small flex items-center gap-2 justify-center transition-colors border border-primary duration-200 ${
+                                currentSector === sector.id
+                                    ? 'bg-primary text-body-dark shadow-md'
+                                    : 'bg-background text-body-base hover:bg-background-light hover:text-body-light'
+                            }`}
+                            title={sector.description}
+                        >
+                            <span class="text-base">{sector.icon}</span>
+                            <span class="hidden sm:inline">{sector.name}</span>
+                            <span class="sm:hidden">{sector.name.split(' ')[0]}</span>
+                            <span class="text-xs font-bold ml-1">({sectorCounts[sector.id] || 0})</span>
+                        </a>
+                    ))}
+                </div>
+            </div>
+            <p class="text-small text-body-base text-left sm:text-right whitespace-nowrap">
+                Menampilkan <span class="font-bold text-primary">{articles.length}</span> dari{' '}
+                <span class="font-bold text-primary">{allArticles.length}</span> artikel
+            </p>
+        </div>
+    )}
+
+    {/* Breaking news section */}
+    {!currentSector && articles.some(article => article.data.isBreaking) && (
+        <div class="breaking-news-content mb-8 p-4 bg-red-50 border border-red-200 rounded-lg" data-aos="fade-up">
+            <h3 class="text-lg font-bold text-red-800 mb-2 flex items-center gap-2">
+                <span class="animate-pulse">🔴</span>
+                Breaking News
+            </h3>
+            <div class="breaking-news-grid grid md:grid-cols-2 gap-4">
+                {articles
+                    .filter(article => article.data.isBreaking)
+                    .slice(0, 2)
+                    .map((article, index) => (
+                        <NewsArticle
+                            title={article.data.title}
+                            excerpt={article.data.excerpt}
+                            featuredImage={article.data.featuredImage}
+                            publishDate={article.data.publishDate}
+                            author={article.data.author}
+                            category={article.data.category}
+                            stockSymbols={article.data.stockSymbols}
+                            isBreaking={true}
+                            slug={article.id}
+                            index={index}
+                        />
+                    ))}
+            </div>
+        </div>
+    )}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {articles
+            .filter(article => !article.data.isBreaking)
+            .map((article, index) => (
+                <div>
+                    <NewsArticle
+                        title={article.data.title}
+                        excerpt={article.data.excerpt}
+                        featuredImage={article.data.featuredImage}
+                        publishDate={article.data.publishDate}
+                        author={article.data.author}
+                        category={article.data.category}
+                        stockSymbols={article.data.stockSymbols}
+                        isBreaking={false}
+                        slug={article.id}
+                        index={index}
+                    />
+                </div>
+            ))}
+    </div>
+
+    {articles.length === 0 && (
+        <div class="text-center py-16">
+            <p class="text-gray-500 text-lg">Belum ada artikel untuk sektor ini.</p>
+            <a href="/berita" class="mt-4 inline-block text-primary hover:underline">
+                ← Kembali ke semua berita
+            </a>
+        </div>
+    )}
+</section>

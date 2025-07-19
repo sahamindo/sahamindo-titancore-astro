@@ -46,24 +46,33 @@ export const statsLists: Record<string, StatsList> = {
         id: 'withContent',
         stats: [
             {
-                value: 10,
-                label: 'Color Schemes',
+                value: 700,
+                label: 'Perusahaan Tercatat',
+                prefix: '+'
             },
             {
-                value: 14.53,
-                label: 'Core Bundle Size',
-                suffix: 'KB'
+                value: 4,
+                label: 'Sektor Utama',
             },
             {
-                value: 11,
-                label: 'Pre-Built Components',
+                value: 24,
+                label: 'Update Harian',
+                suffix: '/7'
             },
             {
-                value: 10,
-                label: 'Build Time',
-                prefix: '<100',
-                suffix: 's'
+                value: 50,
+                label: 'Artikel per Bulan',
+                prefix: '+'
             }
-        ]
+        ],
+        content: {
+            title: "Cakupan Lengkap Pasar Modal Indonesia",
+            description: "Sahamindo menyediakan liputan komprehensif untuk seluruh ekosistem pasar modal Indonesia, dengan fokus pada sektor-sektor kunci yang menggerakkan ekonomi nasional.",
+            button: {
+                text: "Jelajahi Sektor",
+                link: "/sektor",
+                variant: "primary"
+            }
+        }
     }
 };

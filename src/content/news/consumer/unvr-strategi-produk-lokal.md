@@ -1,7 +1,6 @@
 ---
 title: "UNVR Perkuat Strategi Produk Lokal untuk Dongkrak Penjualan"
 excerpt: "PT Unilever Indonesia Tbk (UNVR) meluncurkan rangkaian produk berbasis bahan lokal untuk meningkatkan penjualan di tengah persaingan ketat sektor konsumer."
-featuredImage: "./images/unvr-products.jpg"
 publishDate: "2024-10-24"
 author: "Budi Santoso"
 category: "consumer"

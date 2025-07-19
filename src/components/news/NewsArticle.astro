@@ -1,0 +1,107 @@
+---
+import { marketSectors } from '../../data/categories';
+import HashtagCategory from '../ui/HashtagCategory.astro';
+import Date from '../ui/Date.astro';
+import StockSymbol from '../ui/StockSymbol.astro';
+import { Image } from 'astro:assets';
+
+interface Props {
+    title: string;
+    excerpt: string;
+    featuredImage: any; // ImageMetadata from content collections
+    publishDate: Date;
+    author: string;
+    category: string; // sector ID
+    stockSymbols?: string[];
+    isBreaking?: boolean;
+    slug?: string;
+    index: number;
+}
+
+const { 
+    title, 
+    excerpt, 
+    featuredImage, 
+    publishDate, 
+    author,
+    category, 
+    stockSymbols = [], 
+    isBreaking = false,
+    slug, 
+    index 
+} = Astro.props;
+
+// Get sector information
+const sector = marketSectors.find(s => s.id === category);
+---
+
+<article
+    class="news-card group flex flex-col h-full overflow-hidden bg-white rounded-lg border border-black transition-all duration-300 hover:border-primary relative"
+    data-aos="fade-up"
+    data-aos-delay={index * 100}
+>
+    {isBreaking && (
+        <div class="absolute top-2 left-2 z-10 bg-red-600 text-white px-3 py-1 rounded-md text-xs font-bold uppercase">
+            Breaking News
+        </div>
+    )}
+    
+    <a href={`/berita/${slug}`} class="flex flex-col h-full">
+        <div
+            class="relative aspect-[16/9] overflow-hidden border-black border-b group-hover:border-primary transition-colors duration-300"
+        >
+            {featuredImage && (
+                <Image
+                    src={featuredImage}
+                    alt=""
+                    width={600}
+                    height={338}
+                    class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+                />
+            )}
+            <div class="absolute inset-0 bg-primary opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+        </div>
+
+        <div class="py-4 px-4 flex flex-col flex-grow">
+            {/* Metadata section */}
+            <div class="flex items-center justify-between text-sm text-gray-600 mb-3">
+                <div class="flex items-center gap-2">
+                    <Date date={publishDate} />
+                    <span class="text-gray-400">•</span>
+                    <span class="font-medium">{author}</span>
+                </div>
+                {sector && (
+                    <span class="text-xs font-semibold px-2 py-1 rounded" style={`background-color: var(--color-primary-light); color: var(--color-primary);`}>
+                        {sector.icon} {sector.name}
+                    </span>
+                )}
+            </div>
+
+            <h2 class="text-xl font-bold text-gray-900 group-hover:text-primary transition-colors duration-300">
+                {title}
+            </h2>
+
+            <p class="mt-2 mb-4 text-body-base line-clamp-3 flex-grow text-small group-hover:text-gray-700 transition-colors duration-300">
+                {excerpt}
+            </p>
+
+            {/* Stock symbols section */}
+            {stockSymbols.length > 0 && (
+                <div class="mt-auto pt-2 border-t border-gray-100">
+                    <div class="stock-symbol-list">
+                        <span class="text-xs text-gray-500 font-medium mb-1 sm:mb-0">Saham:</span>
+                        {stockSymbols.map((symbol) => (
+                            <StockSymbol symbol={symbol} inline={true} />
+                        ))}
+                    </div>
+                </div>
+            )}
+        </div>
+    </a>
+</article>
+
+<style>
+    article:hover .stock-symbol {
+        transform: translateY(-1px);
+    }
+</style>

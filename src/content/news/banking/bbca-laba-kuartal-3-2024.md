@@ -1,7 +1,6 @@
 ---
 title: "BBCA Catat Laba Bersih Rp 32,4 Triliun di Kuartal III 2024"
 excerpt: "PT Bank Central Asia Tbk (BBCA) mencatatkan laba bersih sebesar Rp 32,4 triliun pada kuartal III 2024, naik 12,5% year-on-year didorong pertumbuhan kredit yang solid."
-featuredImage: "./images/bbca-building.jpg"
 publishDate: "2024-10-25"
 author: "Andi Wijaya"
 category: "banking"

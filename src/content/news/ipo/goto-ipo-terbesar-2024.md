@@ -1,7 +1,6 @@
 ---
 title: "GoTo Siap Lakukan IPO Terbesar 2024 di Bursa Efek Indonesia"
 excerpt: "PT GoTo Gojek Tokopedia bersiap melakukan penawaran umum perdana (IPO) dengan target dana Rp 15 triliun, menjadi IPO terbesar di BEI tahun 2024."
-featuredImage: "./images/goto-ipo.jpg"
 publishDate: "2024-10-26"
 author: "Siti Rahma"
 category: "ipo"
