@@ -1,27 +1,27 @@
 // src/data/menu.ts
 
 export const headerMenu = [
-    { name: 'Theme Info', link: '/theme-info' },
-    { name: 'Our Team', link: '/team' },
-    { name: 'Blog', link: '/blog' },
-    { name: 'Style-Guide', link: '/style-guide', showArrow: false,
+    { name: 'Beranda', link: '/' },
+    { name: 'Sektor', link: '/sektor', showArrow: true,
         children: [
-            { name: 'Typography', link: '/style-guide#typography' },
-            { name: 'Colors', link: '/style-guide#colors' },
-            { name: 'Links', link: '/style-guide#links' },
-            { name: 'Buttons', link: '/style-guide#buttons' },
-            { name: 'Forms', link: '/style-guide#forms' },
-            { name: 'Lists', link: '/style-guide#lists' },
+            { name: '🏦 Perbankan', link: '/sektor/perbankan' },
+            { name: '📈 IPO', link: '/sektor/ipo' },
+            { name: '🛒 Barang Konsumen', link: '/sektor/barang-konsumen' },
+            { name: '🏗️ Infrastruktur', link: '/sektor/infrastruktur' },
         ]
-    }
+    },
+    { name: 'Analisis', link: '/analisis' },
+    { name: 'Tentang', link: '/tentang' },
+    { name: 'Kontak', link: '/kontak' }
 ];
 
 export const footerMenu = [
-    { name: 'Style Guide', link: '/style-guide' },
+    { name: 'Semua Berita', link: '/berita' },
+    { name: 'Arsip', link: '/arsip' },
 ];
 
 export const legalMenu = [
-    { name: 'Privacy Policy', link: '/legal/privacy-policy' },
-    { name: 'Terms of Service', link: '/legal/terms-of-service' }
+    { name: 'Kebijakan Privasi', link: '/legal/kebijakan-privasi' },
+    { name: 'Syarat & Ketentuan', link: '/legal/syarat-ketentuan' }
 ];
 

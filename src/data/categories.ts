@@ -1,49 +1,52 @@
-interface Category {
+interface MarketSector {
+  id: string;
   name: string;
   slug: string;
   description: string;
+  icon: string;
 }
 
-export const categories: Category[] = [
+export const marketSectors: MarketSector[] = [
   {
-    name: 'Tech',
-    slug: 'tech',
-    description: 'Latest in technology and software development'
+    id: 'banking',
+    name: 'Perbankan',
+    slug: 'perbankan',
+    description: 'Berita dan analisis sektor perbankan Indonesia - BBCA, BBRI, BMRI, BBNI',
+    icon: '🏦'
   },
   {
-    name: 'Web Development',
-    slug: 'web-development',
-    description: 'Tips and insights for better web development'
+    id: 'ipo',
+    name: 'IPO',
+    slug: 'ipo',
+    description: 'Informasi penawaran saham perdana (IPO) di Bursa Efek Indonesia',
+    icon: '📈'
   },
   {
-    name: 'Design',
-    slug: 'design',
-    description: 'Exploring design and user experience'
+    id: 'consumer',
+    name: 'Barang Konsumen',
+    slug: 'barang-konsumen',
+    description: 'Berita saham sektor konsumer - ICBP, INDF, UNVR, GGRM',
+    icon: '🛒'
   },
   {
-    name: 'Accessibility',
-    slug: 'accessibility',
-    description: 'Exploring accessibility and user experience'
-  },
-  {
-    name: 'Theme Usage',
-    slug: 'theme-usage',
-    description: 'Learn how to use the theme'
-  },
-  {
-    name: 'Astro JS',
-    slug: 'astro-js',
-    description: 'Everything about Astro JS framework and development'
-  },
-  {
-    name: 'SEO',
-    slug: 'seo',
-    description: 'Search engine optimization strategies and best practices'
+    id: 'infrastructure',
+    name: 'Infrastruktur',
+    slug: 'infrastruktur',
+    description: 'Analisis sektor infrastruktur dan konstruksi - WIKA, WSKT, ADHI, PTPP',
+    icon: '🏗️'
   },
   
 ];
 
-// Helper function to get category by slug
-export function getCategoryBySlug(slug: string): Category | undefined {
-  return categories.find(category => category.slug === slug);
+// Helper function to get sector by slug
+export function getSectorBySlug(slug: string): MarketSector | undefined {
+  return marketSectors.find(sector => sector.slug === slug);
 }
+
+// Helper function to get sector by id
+export function getSectorById(id: string): MarketSector | undefined {
+  return marketSectors.find(sector => sector.id === id);
+}
+
+// Legacy support - map categories to marketSectors
+export const categories = marketSectors;
