@@ -1,6 +1,6 @@
 ---
 interface Props {
-    date: string | number | Date;
+    date?: string | number | Date;
 }
 
 const { date } = Astro.props;
@@ -8,7 +8,10 @@ const { date } = Astro.props;
 // Ensure we're working with a Date object
 let dateObj: Date;
 try {
-    if (date instanceof Date) {
+    // Handle undefined/null dates
+    if (!date) {
+        dateObj = new Date(); // Use current date as fallback
+    } else if (date instanceof Date) {
         dateObj = date;
     } else if (typeof date === 'string') {
         // Handle YYYY-MM-DD format
@@ -19,10 +22,11 @@ try {
     
     // Validate the date
     if (isNaN(dateObj.getTime())) {
-        throw new Error(`Invalid date provided to Date component: ${date}`);
+        console.warn(`Invalid date provided to Date component: ${date}, using current date`);
+        dateObj = new Date();
     }
 } catch (error) {
-    console.error('Date parsing error:', error, 'Input:', date);
+    console.warn('Date parsing error:', error, 'Input:', date, 'using current date');
     dateObj = new Date(); // Fallback to current date
 }
 
