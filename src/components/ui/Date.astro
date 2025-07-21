@@ -6,22 +6,33 @@ interface Props {
 const { date } = Astro.props;
 
 // Ensure we're working with a Date object
-const dateObj = new (Date as DateConstructor)(date instanceof Date ? date.getTime() : date);
-
-// Validate the date
-if (isNaN(dateObj.getTime())) {
-    throw new Error('Invalid date provided to Date component');
+let dateObj: Date;
+try {
+    if (date instanceof Date) {
+        dateObj = date;
+    } else if (typeof date === 'string') {
+        // Handle YYYY-MM-DD format
+        dateObj = new Date(date + 'T00:00:00.000Z');
+    } else {
+        dateObj = new Date(date);
+    }
+    
+    // Validate the date
+    if (isNaN(dateObj.getTime())) {
+        throw new Error(`Invalid date provided to Date component: ${date}`);
+    }
+} catch (error) {
+    console.error('Date parsing error:', error, 'Input:', date);
+    dateObj = new Date(); // Fallback to current date
 }
 
-const formattedDate = dateObj.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-}).replace(/(\d+)(?=(,))/, (match: string) => {
-    const day = parseInt(match);
-    const suffix = ['th', 'st', 'nd', 'rd'][(day % 10 > 3 || day > 20) ? 0 : day % 10];
-    return day + suffix;
-});
+// Indonesian month names
+const monthNames = [
+    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+];
+
+const formattedDate = `${dateObj.getDate()} ${monthNames[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
 ---
 
 <time datetime={dateObj.toISOString()} class="text-sm text-body-base">

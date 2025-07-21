@@ -13,24 +13,28 @@ export const faqLists: Record<string, FaqList> = {
         id: 'main',
         faqs: [
             {
-                question: "Is Titan Core completely free to use?",
-                answer: "Yes, Titan Core is 100% free and open-source. You can use it for personal and commercial projects without any licensing fees."
+                question: "Bagaimana cara membaca kode saham Indonesia?",
+                answer: "Kode saham Indonesia menggunakan format 4 huruf diikuti .JK, contoh: BBCA.JK untuk Bank Central Asia, TLKM.JK untuk Telkom Indonesia. Kode ini digunakan untuk mengidentifikasi saham di Bursa Efek Indonesia."
             },
             {
-                question: "How do I customize the color schemes?",
-                answer: "Titan Core comes with 10 pre-built color schemes that can be easily switched through the theme configuration file. For custom colors, you can modify the CSS variables in the `src/styles/global.css` file to match your brand identity."
+                question: "Apa saja sektor yang dibahas di Sahamindo?",
+                answer: "Sahamindo fokus pada 4 sektor utama: Perbankan (banking), IPO & listing baru, Barang Konsumen (consumer goods), dan Infrastruktur. Sektor-sektor ini mewakili pilar ekonomi Indonesia yang paling aktif di pasar modal."
             },
             {
-                question: "Do I need to know Astro JS to use this theme?",
-                answer: "Basic familiarity with Astro JS is helpful, but not required. The component-based architecture makes it easy to understand and modify even if you're new to Astro."
+                question: "Seberapa sering berita di Sahamindo diperbarui?",
+                answer: "Kami memperbarui berita setiap hari kerja bursa, dengan breaking news untuk pengumuman penting seperti laporan keuangan, merger, akuisisi, atau perubahan manajemen. Tim redaksi kami bekerja dari jam buka hingga tutup bursa."
             },
             {
-                question: "Can I use Titan Core as a starting point for client projects?",
-                answer: "Absolutely! Titan Core is designed to be a foundation theme that you can build upon for client projects. Its clean architecture and minimal approach make it perfect as a starting point for customized websites."
+                question: "Apakah analisis di Sahamindo gratis untuk diakses?",
+                answer: "Ya, seluruh content Sahamindo termasuk berita, analisis sektor, dan update kinerja saham dapat diakses secara gratis. Kami berkomitmen menyediakan informasi berkualitas untuk mendukung investor Indonesia."
             },
             {
-                question: "How often is Titan Core updated?",
-                answer: "We aim to update Titan Core regularly to keep it compatible with the latest Astro JS releases and web standards. Major updates are released quarterly, with smaller fixes and improvements added more frequently. You can star our GitHub repository to stay informed about updates."
+                question: "Bagaimana kredibilitas sumber berita Sahamindo?",
+                answer: "Sahamindo menggunakan sumber resmi seperti laporan perusahaan, pengumuman Bursa Efek Indonesia (IDX), siaran pers manajemen, dan wawancara langsung dengan pihak terkait. Semua artikel melalui proses fact-checking sebelum publikasi."
+            },
+            {
+                question: "Bisakah saya mencari berita saham tertentu?",
+                answer: "Tentu! Gunakan fitur pencarian kami untuk mencari berdasarkan kode saham (contoh: BBCA.JK), nama perusahaan, sektor, atau topik tertentu. Anda juga bisa menjelajahi arsip berita berdasarkan tanggal dan kategori."
             }
         ]
     }

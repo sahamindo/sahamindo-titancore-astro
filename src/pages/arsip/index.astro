@@ -1,0 +1,355 @@
+---
+import SEOLayout from '@layouts/SEOLayout.astro';
+import { getCollection } from 'astro:content';
+import { createArchive } from '@utils/search';
+import { marketSectors } from '@data/categories';
+import { generateSystemPageSEO, generateBreadcrumbJsonLd } from '@utils/seo';
+import NewsArticle from '@components/news/NewsArticle.astro';
+
+const allNews = await getCollection('news', ({ data }) => data.publish === true);
+const archive = createArchive(allNews);
+
+// Get monthly names in Indonesian
+const monthNames = [
+  'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+];
+
+// Get stats
+const totalArticles = allNews.length;
+const currentYear = new Date().getFullYear();
+const thisYearArticles = allNews.filter(article => 
+  new Date(article.data.publishDate).getFullYear() === currentYear
+).length;
+
+// Get latest from each sector
+const latestBySector = marketSectors.map(sector => ({
+  sector,
+  articles: archive.bySector[sector.id]?.slice(0, 3) || []
+}));
+
+// Generate SEO metadata
+const seo = generateSystemPageSEO('archive');
+
+// Generate breadcrumb JSON-LD
+const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+  { name: 'Beranda', url: Astro.site!.toString() },
+  { name: 'Arsip', url: new URL('/arsip', Astro.site).toString() }
+]);
+
+const additionalJsonLd = [breadcrumbJsonLd];
+---
+
+<SEOLayout seo={seo} additionalJsonLd={additionalJsonLd}>
+  <main class="container mx-auto px-4 py-8">
+    <!-- Archive Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Arsip Berita</h1>
+      <p class="text-gray-600">Jelajahi koleksi lengkap berita dan analisis pasar saham Indonesia</p>
+    </div>
+
+    <!-- Archive Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-blue-50 rounded-lg p-6">
+        <div class="text-2xl font-bold text-blue-600 mb-1">{totalArticles}</div>
+        <div class="text-blue-700 font-medium">Total Artikel</div>
+      </div>
+      <div class="bg-green-50 rounded-lg p-6">
+        <div class="text-2xl font-bold text-green-600 mb-1">{thisYearArticles}</div>
+        <div class="text-green-700 font-medium">Artikel Tahun {currentYear}</div>
+      </div>
+      <div class="bg-purple-50 rounded-lg p-6">
+        <div class="text-2xl font-bold text-purple-600 mb-1">{marketSectors.length}</div>
+        <div class="text-purple-700 font-medium">Sektor Pasar</div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="mb-8">
+      <nav class="flex space-x-8 border-b border-gray-200">
+        <button 
+          id="tab-date" 
+          class="tab-button py-2 px-1 border-b-2 border-blue-500 font-medium text-blue-600"
+          data-tab="date"
+        >
+          Berdasarkan Tanggal
+        </button>
+        <button 
+          id="tab-sector" 
+          class="tab-button py-2 px-1 border-b-2 border-transparent font-medium text-gray-500 hover:text-gray-700"
+          data-tab="sector"
+        >
+          Berdasarkan Sektor
+        </button>
+      </nav>
+    </div>
+
+    <!-- Date Archive -->
+    <div id="archive-date" class="archive-section">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Archive Timeline -->
+        <div class="space-y-4">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Timeline Arsip</h2>
+          <div class="space-y-3">
+            {archive.byDate.map((entry) => (
+              <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                <button 
+                  class="archive-month-toggle w-full px-4 py-3 text-left hover:bg-gray-50 focus:bg-gray-50 transition-colors"
+                  data-month={`${entry.year}-${entry.month}`}
+                >
+                  <div class="flex justify-between items-center">
+                    <div>
+                      <div class="font-medium text-gray-900">
+                        {monthNames[entry.month - 1]} {entry.year}
+                      </div>
+                      <div class="text-sm text-gray-500">
+                        {entry.count} artikel
+                      </div>
+                    </div>
+                    <div class="text-gray-400">
+                      <svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                      </svg>
+                    </div>
+                  </div>
+                </button>
+                <div 
+                  id={`articles-${entry.year}-${entry.month}`}
+                  class="archive-month-content hidden border-t border-gray-100"
+                >
+                  <div class="p-4 space-y-3">
+                    {entry.articles.slice(0, 5).map((article) => (
+                      <a 
+                        href={`/berita/${article.slug}`}
+                        class="block p-3 rounded hover:bg-gray-50 transition-colors"
+                      >
+                        <div class="font-medium text-gray-900 text-sm mb-1">
+                          {article.data.title}
+                        </div>
+                        <div class="text-xs text-gray-500 flex justify-between">
+                          <span>{article.data.author}</span>
+                          <span>{new Date(article.data.publishDate).toLocaleDateString('id-ID')}</span>
+                        </div>
+                        {article.data.stockSymbols && (
+                          <div class="mt-1 flex flex-wrap gap-1">
+                            {article.data.stockSymbols.slice(0, 3).map(symbol => (
+                              <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded">
+                                {symbol}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </a>
+                    ))}
+                    {entry.articles.length > 5 && (
+                      <div class="text-center pt-2">
+                        <a 
+                          href={`/arsip/${entry.year}/${entry.month.toString().padStart(2, '0')}`}
+                          class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                        >
+                          Lihat semua {entry.articles.length} artikel →
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Recent Articles -->
+        <div class="space-y-6">
+          <h2 class="text-xl font-semibold text-gray-900">Artikel Terbaru</h2>
+          <div class="space-y-4">
+            {allNews.slice(0, 6).map((article) => (
+              <div class="bg-white rounded-lg border border-gray-200 p-4">
+                <a href={`/berita/${article.slug}`} class="block">
+                  <h3 class="font-medium text-gray-900 mb-2 hover:text-blue-600 transition-colors">
+                    {article.data.title}
+                  </h3>
+                  <p class="text-gray-600 text-sm mb-2 line-clamp-2">
+                    {article.data.excerpt}
+                  </p>
+                  <div class="flex justify-between items-center text-sm text-gray-500">
+                    <span>{article.data.author}</span>
+                    <span>{new Date(article.data.publishDate).toLocaleDateString('id-ID')}</span>
+                  </div>
+                  {article.data.stockSymbols && (
+                    <div class="mt-2 flex flex-wrap gap-1">
+                      {article.data.stockSymbols.slice(0, 3).map(symbol => (
+                        <span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-0.5 rounded">
+                          {symbol}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sector Archive -->
+    <div id="archive-sector" class="archive-section hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {latestBySector.map(({ sector, articles }) => (
+          <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div class="bg-gray-50 px-4 py-3 border-b border-gray-200">
+              <div class="flex justify-between items-center">
+                <div>
+                  <h3 class="font-semibold text-gray-900">{sector.name}</h3>
+                  <p class="text-sm text-gray-600">{sector.description}</p>
+                </div>
+                <div class="text-sm text-gray-500">
+                  {archive.bySector[sector.id]?.length || 0} artikel
+                </div>
+              </div>
+            </div>
+            <div class="p-4">
+              {articles.length > 0 ? (
+                <div class="space-y-3">
+                  {articles.map((article) => (
+                    <a 
+                      href={`/berita/${article.slug}`}
+                      class="block p-3 rounded hover:bg-gray-50 transition-colors"
+                    >
+                      <div class="font-medium text-gray-900 text-sm mb-1">
+                        {article.data.title}
+                      </div>
+                      <div class="text-xs text-gray-500 flex justify-between">
+                        <span>{article.data.author}</span>
+                        <span>{new Date(article.data.publishDate).toLocaleDateString('id-ID')}</span>
+                      </div>
+                      {article.data.stockSymbols && (
+                        <div class="mt-1 flex flex-wrap gap-1">
+                          {article.data.stockSymbols.slice(0, 2).map(symbol => (
+                            <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded">
+                              {symbol}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </a>
+                  ))}
+                  {archive.bySector[sector.id] && archive.bySector[sector.id].length > 3 && (
+                    <div class="text-center pt-2">
+                      <a 
+                        href={`/sektor/${sector.id}`}
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        Lihat semua artikel {sector.name} →
+                      </a>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div class="text-center text-gray-500 py-8">
+                  <div class="text-gray-400 text-4xl mb-2">📰</div>
+                  <p class="text-sm">Belum ada artikel untuk sektor ini</p>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Quick Access -->
+    <div class="mt-12 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Akses Cepat</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a 
+          href="/cari" 
+          class="text-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
+        >
+          <div class="text-2xl mb-2">🔍</div>
+          <div class="text-sm font-medium text-gray-900">Pencarian</div>
+        </a>
+        <a 
+          href="/sektor/banking" 
+          class="text-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
+        >
+          <div class="text-2xl mb-2">🏦</div>
+          <div class="text-sm font-medium text-gray-900">Perbankan</div>
+        </a>
+        <a 
+          href="/sektor/ipo" 
+          class="text-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
+        >
+          <div class="text-2xl mb-2">🚀</div>
+          <div class="text-sm font-medium text-gray-900">IPO</div>
+        </a>
+        <a 
+          href="/berita" 
+          class="text-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
+        >
+          <div class="text-2xl mb-2">📈</div>
+          <div class="text-sm font-medium text-gray-900">Semua Berita</div>
+        </a>
+      </div>
+    </div>
+  </main>
+</SEOLayout>
+
+<script>
+  // Tab switching
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const archiveSections = document.querySelectorAll('.archive-section');
+
+  tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const tabId = button.getAttribute('data-tab');
+      
+      // Update active tab
+      tabButtons.forEach(btn => {
+        btn.classList.remove('border-blue-500', 'text-blue-600');
+        btn.classList.add('border-transparent', 'text-gray-500');
+      });
+      button.classList.remove('border-transparent', 'text-gray-500');
+      button.classList.add('border-blue-500', 'text-blue-600');
+      
+      // Show/hide sections
+      archiveSections.forEach(section => {
+        section.classList.add('hidden');
+      });
+      document.getElementById(`archive-${tabId}`)?.classList.remove('hidden');
+    });
+  });
+
+  // Month toggle functionality
+  const monthToggles = document.querySelectorAll('.archive-month-toggle');
+  
+  monthToggles.forEach(toggle => {
+    toggle.addEventListener('click', () => {
+      const monthId = toggle.getAttribute('data-month');
+      const content = document.getElementById(`articles-${monthId}`);
+      const arrow = toggle.querySelector('svg');
+      
+      if (content?.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        arrow?.classList.add('rotate-90');
+      } else {
+        content?.classList.add('hidden');
+        arrow?.classList.remove('rotate-90');
+      }
+    });
+  });
+
+  // Expand first month by default
+  const firstToggle = document.querySelector('.archive-month-toggle');
+  if (firstToggle) {
+    firstToggle.click();
+  }
+</script>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

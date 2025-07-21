@@ -11,6 +11,8 @@ export const headerMenu = [
         ]
     },
     { name: 'Analisis', link: '/analisis' },
+    { name: 'Pencarian', link: '/cari' },
+    { name: 'Arsip', link: '/arsip' },
     { name: 'Tentang', link: '/tentang' },
     { name: 'Kontak', link: '/kontak' }
 ];

@@ -1,0 +1,102 @@
+---
+import type { SEOMeta } from '@utils/seo';
+
+export interface Props {
+  seo: SEOMeta;
+  additionalJsonLd?: Record<string, any>[];
+}
+
+const { seo, additionalJsonLd = [] } = Astro.props;
+---
+
+<!-- Primary Meta Tags -->
+<title>{seo.title}</title>
+<meta name="title" content={seo.title} />
+<meta name="description" content={seo.description} />
+<meta name="language" content="id" />
+<meta name="author" content="Sahamindo" />
+
+<!-- Canonical URL -->
+{seo.canonical && <link rel="canonical" href={seo.canonical} />}
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={seo.openGraph.type} />
+<meta property="og:url" content={Astro.url} />
+<meta property="og:title" content={seo.openGraph.title} />
+<meta property="og:description" content={seo.openGraph.description} />
+<meta property="og:locale" content={seo.openGraph.locale} />
+<meta property="og:site_name" content={seo.openGraph.siteName} />
+{seo.openGraph.image && <meta property="og:image" content={seo.openGraph.image} />}
+
+<!-- Twitter -->
+<meta property="twitter:card" content={seo.twitter.card} />
+<meta property="twitter:url" content={Astro.url} />
+<meta property="twitter:title" content={seo.twitter.title} />
+<meta property="twitter:description" content={seo.twitter.description} />
+{seo.twitter.image && <meta property="twitter:image" content={seo.twitter.image} />}
+
+<!-- Additional Meta Tags for Finance Content -->
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+<meta name="googlebot" content="index, follow" />
+<meta name="format-detection" content="telephone=yes" />
+<meta name="coverage" content="Indonesia" />
+<meta name="distribution" content="Indonesia" />
+<meta name="rating" content="general" />
+<meta name="revisit-after" content="1 days" />
+
+<!-- Hreflang for Indonesian content -->
+<link rel="alternate" hreflang="id" href={Astro.url} />
+<link rel="alternate" hreflang="x-default" href={Astro.url} />
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json" set:html={JSON.stringify(seo.jsonLd)} />
+
+<!-- Additional JSON-LD if provided -->
+{additionalJsonLd.map(jsonLd => (
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+))}
+
+<!-- Feed Links (removed RSS generation) -->
+
+<!-- Preconnect to External Domains for Performance -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+<!-- Favicon and Icons -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+
+<!-- Theme Color -->
+<meta name="theme-color" content="#1e40af" />
+<meta name="msapplication-TileColor" content="#1e40af" />
+
+<!-- Additional Finance-specific Meta Tags -->
+<meta name="news_keywords" content="saham indonesia, bursa efek, investasi, pasar modal, keuangan" />
+<meta name="article:publisher" content="https://sahamindo.com" />
+<meta name="price:currency" content="IDR" />
+<meta name="geo.region" content="ID" />
+<meta name="geo.country" content="Indonesia" />
+<meta name="geo.placename" content="Indonesia" />
+
+<!-- Security Headers -->
+<meta http-equiv="X-Content-Type-Options" content="nosniff" />
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
+<meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+
+<!-- Performance Hints -->
+<link rel="dns-prefetch" href="//www.google-analytics.com" />
+<link rel="dns-prefetch" href="//fonts.googleapis.com" />
+
+<!-- Mobile Optimization -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
+
+<!-- Search Engine Verification (placeholder - replace with actual verification codes) -->
+<meta name="google-site-verification" content="" />
+<meta name="msvalidate.01" content="" />
+<meta name="yandex-verification" content="" />

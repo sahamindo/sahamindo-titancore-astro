@@ -1,5 +1,4 @@
 ---
-import { Fragment } from 'astro/jsx-runtime';
 import Layout from '../../layouts/Layout.astro';
 import NewsList from './NewsList.astro';
 import InnerHero from '../sections/InnerHero.astro';
@@ -64,34 +63,7 @@ const heroContent = {
                         )}
                         
                         <div class="flex items-center gap-2">
-                            <span class="text-sm text-gray-600 mr-2">Halaman:</span>
-                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => {
-                                // Show first, last, current, and adjacent pages
-                                const showPage = pageNum === 1 || 
-                                                pageNum === totalPages || 
-                                                Math.abs(pageNum - currentPage) <= 1;
-                                
-                                if (!showPage && pageNum === currentPage - 2) {
-                                    return <span key={`ellipsis-${pageNum}`} class="px-2">...</span>;
-                                }
-                                
-                                if (!showPage) return <Fragment key={`empty-${pageNum}`}></Fragment>;
-                                
-                                return (
-                                    <a
-                                        key={`page-${pageNum}`}
-                                        href={pageNum === 1 ? baseUrl : `${baseUrl}/${pageNum}`}
-                                        class={`w-10 h-10 flex items-center justify-center rounded-full transition-colors ${
-                                            currentPage === pageNum
-                                                ? 'bg-primary text-white font-bold'
-                                                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                                        }`}
-                                        aria-current={currentPage === pageNum ? 'page' : undefined}
-                                    >
-                                        {pageNum}
-                                    </a>
-                                );
-                            })}
+                            <span class="text-sm text-gray-600 mr-2">Halaman {currentPage} dari {totalPages}</span>
                         </div>
 
                         {nextPage && (

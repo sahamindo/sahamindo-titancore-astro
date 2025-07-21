@@ -1,7 +1,9 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
-import Layout from '@layouts/Layout.astro';
+import SEOLayout from '@layouts/SEOLayout.astro';
 import { getSectorById } from '@data/categories';
+import { generateArticleSEO, generateBreadcrumbJsonLd, generateFAQJsonLd } from '@utils/seo';
+import { getRelatedArticles } from '@utils/search';
 import Date from '@components/ui/Date.astro';
 import StockSymbol from '@components/ui/StockSymbol.astro';
 import NewsArticle from '@components/news/NewsArticle.astro';
@@ -12,7 +14,7 @@ export async function getStaticPaths() {
     });
 
     return newsEntries.map(entry => ({
-        params: { slug: entry.id },
+        params: { slug: entry.slug },
         props: { entry }
     }));
 }
@@ -26,24 +28,29 @@ const { Content } = await entry.render();
 
 const sector = getSectorById(entry.data.category);
 
-// Get related articles from same sector
-const relatedArticles = await getCollection('news', ({ data, id }) => {
-    return (
-        (import.meta.env.DEV || data.publish !== false) &&
-        data.category === entry.data.category &&
-        id !== entry.id
-    );
+// Get all articles for related articles calculation
+const allArticles = await getCollection('news', ({ data }) => {
+    return import.meta.env.DEV || data.publish !== false;
 });
 
-const sortedRelated = relatedArticles
-    .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime())
-    .slice(0, 3);
+// Get related articles using the search utility
+const relatedArticles = getRelatedArticles(entry, allArticles, 3);
 
-const seoTitle = entry.data.seo?.title || `${entry.data.title} - Sahamindo`;
-const seoDescription = entry.data.seo?.description || entry.data.excerpt;
+// Generate SEO metadata
+const canonicalURL = new URL(`/berita/${entry.slug}`, Astro.site).toString();
+const seo = generateArticleSEO(entry, canonicalURL);
+
+// Generate additional JSON-LD
+const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+    { name: 'Beranda', url: Astro.site!.toString() },
+    { name: 'Berita', url: new URL('/berita', Astro.site).toString() },
+    { name: entry.data.title, url: canonicalURL }
+]);
+
+const additionalJsonLd = [breadcrumbJsonLd];
 ---
 
-<Layout title={seoTitle} description={seoDescription}>
+<SEOLayout seo={seo} additionalJsonLd={additionalJsonLd}>
     <main>
         <article class="site-container mx-auto px-4 py-base">
             {/* Breaking news banner */}
@@ -119,32 +126,21 @@ const seoDescription = entry.data.seo?.description || entry.data.excerpt;
         </article>
 
         {/* Related articles */}
-        {sortedRelated.length > 0 && (
+        {relatedArticles.length > 0 && (
             <section class="bg-gray-50 py-16">
                 <div class="site-container mx-auto px-4">
                     <h2 class="text-3xl font-bold text-center mb-12">
-                        Artikel Terkait dari Sektor {sector?.name}
+                        Artikel Terkait
                     </h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {sortedRelated.map((article, index) => (
-                            <NewsArticle
-                                title={article.data.title}
-                                excerpt={article.data.excerpt}
-                                featuredImage={article.data.featuredImage}
-                                publishDate={article.data.publishDate}
-                                author={article.data.author}
-                                category={article.data.category}
-                                stockSymbols={article.data.stockSymbols}
-                                isBreaking={article.data.isBreaking}
-                                slug={article.id}
-                                index={index}
-                            />
+                        {relatedArticles.map((article) => (
+                            <NewsArticle article={article} />
                         ))}
                     </div>
                     
                     <div class="text-center mt-8">
                         <a 
-                            href={`/sektor/${sector?.slug}`}
+                            href={`/sektor/${sector?.id}`}
                             class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
                         >
                             Lihat Semua Berita {sector?.name}
@@ -157,38 +153,54 @@ const seoDescription = entry.data.seo?.description || entry.data.excerpt;
             </section>
         )}
     </main>
-</Layout>
+</SEOLayout>
 
 <style>
     .prose h2 {
-        @apply text-2xl font-bold mt-8 mb-4;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
     }
     
     .prose h3 {
-        @apply text-xl font-bold mt-6 mb-3;
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
     }
     
     .prose p {
-        @apply mb-4 leading-relaxed;
+        margin-bottom: 1rem;
+        line-height: 1.625;
     }
     
     .prose ul, .prose ol {
-        @apply mb-4 ml-6;
+        margin-bottom: 1rem;
+        margin-left: 1.5rem;
     }
     
     .prose li {
-        @apply mb-2;
+        margin-bottom: 0.5rem;
     }
     
     .prose strong {
-        @apply font-semibold;
+        font-weight: 600;
     }
     
     .prose a {
-        @apply text-primary hover:underline;
+        color: #2563eb;
+        text-decoration: underline;
+    }
+    
+    .prose a:hover {
+        text-decoration: none;
     }
     
     .prose blockquote {
-        @apply border-l-4 border-primary pl-4 italic my-6;
+        border-left: 4px solid #2563eb;
+        padding-left: 1rem;
+        font-style: italic;
+        margin: 1.5rem 0;
     }
 </style>

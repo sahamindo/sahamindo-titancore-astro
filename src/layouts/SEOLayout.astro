@@ -1,0 +1,115 @@
+---
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import ThemeSwitcher from "../components/ThemeSwitcher.astro";
+import SEOHead from "../components/SEOHead.astro";
+import { themeSetting } from "../data/config";
+import type { SEOMeta } from "@utils/seo";
+import { generateOrganizationJsonLd } from "@utils/seo";
+import 'aos/dist/aos.css';
+
+const { theme } = themeSetting;
+
+interface Props {
+  seo: SEOMeta;
+  footerCta?: {
+    title: string;
+    description: string;
+    hideCta: boolean;
+    button: {
+      text: string;
+      link: string;
+      target?: string;
+    };
+  };
+  additionalJsonLd?: Record<string, any>[];
+  className?: string;
+}
+
+const { seo, footerCta, additionalJsonLd = [], className } = Astro.props;
+
+// Always include organization JSON-LD
+const allJsonLd = [generateOrganizationJsonLd(), ...additionalJsonLd];
+---
+
+<!doctype html>
+<html lang="id" class={className}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- SEO Head Component -->
+    <SEOHead seo={seo} additionalJsonLd={allJsonLd} />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+    
+    <!-- Sitemap -->
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    
+    <!-- AOS CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
+  </head>
+  <body data-theme={theme}>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer footerCta={footerCta} />
+    <ThemeSwitcher />
+    
+    <!-- AOS JavaScript -->
+    <script>
+      import AOS from 'aos';
+      AOS.init({
+        duration: 800,
+        once: true,
+        offset: 100,
+        delay: 100,
+      });
+    </script>
+    
+    <!-- Analytics placeholder (replace with actual implementation) -->
+    <script>
+      // Google Analytics or other analytics
+      // Implementation will depend on the analytics service used
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  /* Optimize for mobile-first finance content */
+  @media (max-width: 768px) {
+    body {
+      font-size: 16px; /* Prevent zoom on iOS */
+    }
+    
+    /* Improve readability of financial data on mobile */
+    .financial-data {
+      font-variant-numeric: tabular-nums;
+    }
+  }
+  
+  /* Ensure stock symbols are easily readable */
+  [data-stock-symbol] {
+    font-family: 'Monaco', 'Consolas', monospace;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  
+  /* Improve contrast for financial content */
+  .price-positive {
+    color: #059669;
+  }
+  
+  .price-negative {
+    color: #dc2626;
+  }
+  
+  .price-neutral {
+    color: #6b7280;
+  }
+</style>
