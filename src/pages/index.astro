@@ -17,6 +17,7 @@ import styleGuideImage from '../assets/images/home/developer.jpg';
 import { getCollection } from 'astro:content';
 import NewsArticle from '@components/news/NewsArticle.astro';
 import { marketSectors } from '@data/categories';
+import { Newspaper, TrendingUp, Target, BarChart3 } from 'lucide-astro';
 
 const seoTitle = "Sahamindo - Portal Berita Saham Indonesia";
 const seoDescription = "Portal berita dan analisis pasar saham Indonesia terkini. Informasi sektor perbankan, IPO, barang konsumen, dan infrastruktur untuk investor cerdas.";
@@ -60,22 +61,22 @@ const featuresSection = {
         {
             title: "Berita Real-Time",
             description: "Update berita pasar saham terkini dari Bursa Efek Indonesia",
-            icon: "🚀"
+            icon: Newspaper
         },
         {
             title: "Analisis Mendalam",
             description: "Analisis fundamental dan teknikal dari para ahli pasar modal",
-            icon: "📊"
+            icon: TrendingUp
         },
         {
             title: "Fokus Sektor",
             description: "Liputan khusus sektor perbankan, IPO, konsumer, dan infrastruktur",
-            icon: "🎯"
+            icon: Target
         },
         {
             title: "Data Akurat",
             description: "Data pergerakan saham dan indeks yang akurat dan terpercaya",
-            icon: "📈"
+            icon: BarChart3
         }
     ],
     button: {
